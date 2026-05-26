@@ -39,18 +39,18 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      # 4. Install Playwright browsers + OS deps (IMPORTANT)
+      # 4. Install Playwright browsers + system deps (CRITICAL)
       - name: Install Playwright browsers
         run: |
-          python -m playwright install --with-deps
+          python -m playwright install --with-deps chromium
 
-      # 5. Run tests (HEADLESS + traces)
+      # 5. Run tests (stable CI mode)
       - name: Run tests
         run: |
           pytest tests/ -v \
             --tracing=retain-on-failure
 
-      # 6. Upload traces & reports even if failure
+      # 6. Upload artifacts (always, even failure)
       - name: Upload Playwright artifacts
         if: always()
         uses: actions/upload-artifact@v4
@@ -60,3 +60,4 @@ jobs:
             test-results/
             playwright-report/
             **/trace.zip
+            **/traces/
