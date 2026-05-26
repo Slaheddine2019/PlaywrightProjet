@@ -2,13 +2,7 @@ name: Playwright Python Tests
 
 on:
   push:
-    branches:
-      - main
-      - master
   pull_request:
-    branches:
-      - main
-      - master
 
 jobs:
   test:
@@ -19,39 +13,40 @@ jobs:
 
     env:
       CI: true
+      DISPLAY: ":99"
 
     steps:
 
-      # 1. Checkout repo
-      - name: Checkout repository
+      - name: Checkout
         uses: actions/checkout@v4
 
-      # 2. Setup Python
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
           python-version: "3.13"
-          cache: "pip"
+          cache: pip
 
-      # 3. Install dependencies
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      # 4. Install Playwright browsers + system deps (CRITICAL)
+      # 🔥 FIX CRUCIAL X11 + Linux dependencies
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y xvfb
+
       - name: Install Playwright browsers
         run: |
           python -m playwright install --with-deps chromium
 
-      # 5. Run tests (stable CI mode)
-      - name: Run tests
+      # 🔥 RUN TESTS WITH VIRTUAL DISPLAY
+      - name: Run tests (Xvfb)
         run: |
-          pytest tests/ -v \
-            --tracing=retain-on-failure
+          xvfb-run -a pytest tests/ -v --tracing=retain-on-failure
 
-      # 6. Upload artifacts (always, even failure)
-      - name: Upload Playwright artifacts
+      - name: Upload artifacts
         if: always()
         uses: actions/upload-artifact@v4
         with:
@@ -60,4 +55,3 @@ jobs:
             test-results/
             playwright-report/
             **/trace.zip
-            **/traces/
