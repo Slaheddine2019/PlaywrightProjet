@@ -7,7 +7,7 @@ from playwright.sync_api import Playwright, expect
 @pytest.mark.skip(
     reason="Ce test est un exemple de test d'API, il n'est pas lié à l'application web testée"
 )
-def test_api_getttt(playwright):
+def test_api_getttttt(playwright):
     response = playwright.request.get("https://jsonplaceholder.typicode.com/posts/1")
     assert response.status == 200
     data = response.json()
