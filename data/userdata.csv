@@ -1,0 +1,3 @@
+username,password,success
+standard_user,secret_sauce,True
+locked_user,secret_sauce,False
